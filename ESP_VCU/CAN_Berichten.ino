@@ -37,7 +37,7 @@
     BMS_MaxTemperature = ((frame->data.byte[7] * 256) + frame->data.byte[6]) - 273;
   }
 
-  //callback BMS Info
+  //callback BMS Info hoi
   void canRX_372(CAN_FRAME *frame)
   {
     CANMillisCalculator(&CANTimer_372);
