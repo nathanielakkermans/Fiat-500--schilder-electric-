@@ -103,7 +103,7 @@
     motorTorque = ((((frame->data.byte[0] * 256) + frame->data.byte[1]) - 10000) / 10); // Motor Torque -200 / + 200nm
     motorRPM = (frame->data.byte[2] * 256 + frame->data.byte[3] - 20000);               // 289_RrRPM,Rear RPM,220289,C*256+D-20000,-10000,10000,RPM,
     motorHVbatteryVolts = (frame->data.byte[4] * 256 + frame->data.byte[5]);            // Inverter HV
-    motorPower = float(motorTorque *  motorRPM / 9.5488);
+    motorPower = float(motorTorque *  motorRPM / 9.5488) / 100;
   }
 
   // Inverter Temps

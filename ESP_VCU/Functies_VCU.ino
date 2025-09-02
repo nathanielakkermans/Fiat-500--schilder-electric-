@@ -421,10 +421,10 @@
       Serial.println(BMS_MinCellVoltage);
       Serial.print("BMS_MaxCellVoltage: ");
       Serial.println(BMS_MaxCellVoltage);
-      // Serial.print("BMS_MinTemperature: ");
-      // Serial.println(BMS_MinTemperature);
-      // Serial.print("BMS_MaxTemperature: ");
-      // Serial.println(BMS_MaxTemperature);
+      Serial.print("BMS_MinTemperature: ");
+      Serial.println(BMS_MinTemperature);
+      Serial.print("BMS_MaxTemperature: ");
+      Serial.println(BMS_MaxTemperature);
       Serial.print("BMS_Status: ");
       Serial.println(BMS_Status);
       // Serial.print("BMS_ConnectedModules: ");
@@ -670,7 +670,7 @@ void ACChargerLoop()
   if(timer_ACChargerLoop.check())
     {
       //als de bms een fout krijgt dan laden stoppen
-      if (BMS_Status != BMS_Drive){
+      if (BMS_Status == BMS_Error){
           ChargeFinished = true;
           ACChargeState = 0;
           clearToStart = false;
@@ -680,7 +680,7 @@ void ACChargerLoop()
       {
         case 0:
         //als de plug gedetecteerd word mag het laden beginnen
-        if (!ChargeFinished && ChargePlugDetected && ChargePlugWasDisconnected && VCU_State == 3 && BMS_Status == BMS_Drive && BMSOnline && CurrentSensorOnline)
+        if (!ChargeFinished && ChargePlugDetected && ChargePlugWasDisconnected && VCU_State == 3 && BMS_Status == BMS_Ready && BMSOnline && CurrentSensorOnline)
         {
           ChargePlugWasDisconnected = false;
           ChargeFinished = false;
@@ -689,8 +689,8 @@ void ACChargerLoop()
         }
         //als de stroom gaat oplopen beschouw laden gestart
         case 1:
-          currentRamp = 120;
-          if (chgStatus == 8 && (Miliamps > MinChargeCurrent))
+          currentRamp = 100;
+          if (chgStatus == 8 )//&& (Miliamps > MinChargeCurrent))
           {
             ACChargeState = 2;
           }
@@ -704,7 +704,7 @@ void ACChargerLoop()
           }
           
           //als het laden klaar is
-          if (Miliamps < MinChargeCurrent || StartPuls)
+          if (currentRamp < MinChargeCurrent || StartPuls)
           {
             ACChargeState = 3;
           }

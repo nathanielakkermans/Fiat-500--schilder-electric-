@@ -171,17 +171,17 @@
       // Serial2.write(0xff);
       // Serial2.write(0xff);
 
-      myNex.writeNum("soc.val", map((float(CurrentSensor1.Voltage2)/96),3400, 4150, 0, 100));
-      myNex.writeNum("current.val", CurrentSensor1.Miliamps / 100);
+      myNex.writeNum("soc.val", SOCCorrectedFilt);
+      myNex.writeNum("current.val", BMS_Current / 100);
       myNex.writeNum("temp.val", BMS_Temperature);
       myNex.writeNum("templow.val", BMS_MinTemperature);
       myNex.writeNum("temphigh.val", BMS_MaxTemperature);
-      myNex.writeNum("volt.val", CurrentSensor1.Voltage2 / 100);
+      myNex.writeNum("volt.val", BMS_Voltage / 100);
       myNex.writeNum("lowcell.val", BMS_MinCellVoltage);
       myNex.writeNum("highcell.val", BMS_MaxCellVoltage);
       myNex.writeNum("celldelta.val", BMS_MaxCellVoltage - BMS_MinCellVoltage);
       myNex.writeStr("stat.txt", BMS_StatusTXT);
-      myNex.writeNum("motorpower.val", SOCCorrectedFilt*10);
+      myNex.writeNum("motorpower.val", motorPower);
       myNex.writeNum("bmspower.val", ((CurrentSensor1.Miliamps / 1000) * (CurrentSensor1.Voltage2 / 1000))/100);
 
       // myNex.writeNum("tps.val", TPS);
@@ -212,7 +212,7 @@
      
       
 
-      if (DriveBlockCharging)
+      if (chgStatus == 8)
         {
           myNex.writeStr("char_status.txt", "Charging");
         }

@@ -264,9 +264,9 @@
   // byte SetACcurrent;
   // int SetCharging;
   // signed int ChargerTemp;
-  int MaxCellVoltageCharge = 4200;
+  int MaxCellVoltageCharge = 4180;
   int MacSOCCharge = 10000;
-  signed long MinChargeCurrent = 3000;
+  signed long MinChargeCurrent = 30;  //3 amp
   int ACChargeState;
   bool ChargeFinished;
 

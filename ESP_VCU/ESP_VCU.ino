@@ -525,15 +525,14 @@ long diff = us - prev;
     //als de VCU aan staat dan controleren of de inverter gestart mag worden
     if (VCU_Aan)
     {
-      BMS_Status = BMS_Drive;
-      // if (RemContact && StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Drive && !ChargePlugDetected)
-      if (StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Drive && !ChargePlugDetected)
+      // if (RemContact && StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
+      if (StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
       {
         Inverter_Enable = true;
       }
     }
 
-    if (VCU_State != 3 || ChargePlugDetected)
+    if (VCU_State != 3 || ChargePlugDetected || BMS_Status != BMS_Ready)
     {
       Inverter_Enable = false;
     }
@@ -686,47 +685,10 @@ long diff = us - prev;
     }
   #endif
   
-  #ifdef DeviceType_Fuse
-    switch (BMS_Status)
-        {
-          case (BMS_Boot):
-            LED_Color = ROOD;
-            break;
-
-          case (BMS_Ready):
-            LED_Color = WIT;
-            break;
-
-          case (BMS_Precharge):
-            LED_Color = PAARS;
-            break;
-
-          case (BMS_Drive):
-            if (!InverterInDrive && !ChargePlugDetected)
-            {
-              LED_Color = WIT;
-            }else if (ChargePlugDetected)
-            {
-              LED_Color = GEEL;
-            }
-            else
-            {
-              LED_Color = GROEN;
-            }
-            break;
-
-          case (BMS_Error):
-            LED_Color = ROOD;
-            break;
-        }
-    Inputs();
-    Outputs();
-    Debug();
-    Fuse_Status();
-  #endif
 
 
-    CANCheck();
+
+  CANCheck();
 
 
 
