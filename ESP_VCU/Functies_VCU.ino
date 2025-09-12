@@ -213,8 +213,8 @@
         FiltertVCU_Voltage = (FiltertVCU_Voltage * 0.9) + (ADC_ValueVCU_Voltage * 0.1);
 
         //PP meting
-        PP_Voltage = float(ADC_Value3) * 13.4;
-        ChargePlugDetected = PP_Voltage < 30;
+        PP_Voltage = float(ADC_Value3) * 1.7;
+        ChargePlugDetected = PP_Voltage < 2500;
 
         if(!ChargePlugDetected)
         {
@@ -222,7 +222,7 @@
           ChargeFinished = false;
         }
 
-        PP_Res = PP_Ref / PP_Voltage;
+        PP_Res = PP_Voltage / PP_Ref;
 
   //  PP_PullUp;
 
@@ -332,8 +332,8 @@
       // Serial.println(ADC_Value1);
       // Serial.print("ADC 2: ");
       // Serial.println(ADC_Value2);
-      // Serial.print("ADC 3: ");
-      // Serial.println(ADC_Value3);
+      Serial.print("ADC 3: ");
+      Serial.println(ADC_Value3);
       // Serial.print("ADC 4: ");
       // Serial.println(ADC_Value4);
       // Serial.print("TPS1: ");      
@@ -349,10 +349,10 @@
       // Serial.print("TPS diff max ");      
       // Serial.println(TPS_DiffMax);
 
-      // Serial.print("PP_Voltage: ");
-      // Serial.println(PP_Voltage);
-      // Serial.print("PP_Res: ");
-      // Serial.println(PP_Res);
+      Serial.print("PP_Voltage: ");
+      Serial.println(PP_Voltage);
+      Serial.print("PP_Res: ");
+      Serial.println(PP_Res);
 
       
       // Serial.print("TorqueVal: ");      

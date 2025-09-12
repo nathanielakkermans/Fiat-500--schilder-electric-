@@ -66,7 +66,7 @@
   int TorqueCommandRegen = 300;
   
   float PP_Voltage;
-  float PP_Ref = 4500;
+  float PP_Ref = 4600;
   float PP_PullUp = 1000;
   float PP_Res = 0;
   bool ChargePlugDetected;
