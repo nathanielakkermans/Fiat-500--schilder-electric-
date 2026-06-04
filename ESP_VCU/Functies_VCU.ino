@@ -247,9 +247,17 @@
         // {
           TorqueMIN = TorqueCommandMin;         
         // }
-
-        TPS1 = map(ADC_Value1,ADC1_Min,ADC1_Max,TorqueMIN,TorqueCommandMax);
-        TPS2 = map(ADC_Value2,ADC2_Min,ADC2_Max,TorqueMIN,TorqueCommandMax);
+        if(ADC_Value1 < ADC1_Max + 500){
+          TPS1 = map(ADC_Value1,ADC1_Min,ADC1_Max,TorqueMIN,TorqueCommandMax);
+        }else
+        {
+          TPS1 = 0;
+        }
+        if(ADC_Value2 < ADC2_Max + 500){
+          TPS2 = map(ADC_Value2,ADC2_Min,ADC2_Max,TorqueMIN,TorqueCommandMax);
+        }else{
+          TPS2 = 0;
+        }
         TPS_Diff = TPS1 - TPS2;
         Clutch = map(ADC_Value4,ADC4_Min,ADC4_Max,0,100);
         if (Clutch < 0)Clutch = 0;
@@ -272,10 +280,10 @@
         //       TPS = TorqueCommandRegen;
         //     }
         if(Reverse){
-          TorqueVal = 10000 + TPS;
+          TorqueVal = 10000 + (TPS * -1);
         }
         else{
-          TorqueVal = 10000 + (TPS * -1);
+          TorqueVal = 10000 + TPS;
         }
         
 
@@ -303,10 +311,10 @@
       if (timer_Input.check())
       {
         ContactAan = digitalRead(IN1);
-        Reverse = digitalRead(IN2);
-        DeurContact =  0;
-        StartPuls = digitalRead(IN3);
-        RemContact = digitalRead(IN4);    
+        ForwardRequest = digitalRead(IN2);
+        ReverseRequest = digitalRead(IN3);
+        RemContact = digitalRead(IN4); 
+        DeurContact =  0;   
       }
     #endif
   }
@@ -316,15 +324,15 @@
     if (timer_Debug.check())
     {
       //contact ingangen
-      // Serial.print("ContactAan 1: ");
-      // Serial.println(ContactAan);
-      // Serial.print("Reverse 3: ");
-      // Serial.println(Reverse);
-      // Serial.print("StartPuls 3: ");
-      // Serial.println(StartPuls);
-      // Serial.print("RemContact 4: ");
-      // Serial.println(RemContact);
-      // Serial.println();
+      Serial.print("ContactAan 1: ");
+      Serial.println(ContactAan);
+      Serial.print("ForwardRequest: ");
+      Serial.println(ForwardRequest);
+      Serial.print("ReverseRequest: ");
+      Serial.println(ReverseRequest);
+      Serial.print("RemContact 4: ");
+      Serial.println(RemContact);
+      Serial.println();
 
 
       // //analoog input
@@ -332,16 +340,16 @@
       // Serial.println(ADC_Value1);
       // Serial.print("ADC 2: ");
       // Serial.println(ADC_Value2);
-      Serial.print("ADC 3: ");
-      Serial.println(ADC_Value3);
+      // Serial.print("ADC 3: ");
+      // Serial.println(ADC_Value3);
       // Serial.print("ADC 4: ");
       // Serial.println(ADC_Value4);
       // Serial.print("TPS1: ");      
       // Serial.println(TPS1);
       // Serial.print("TPS2: ");      
       // Serial.println(TPS2);
-      // Serial.print("TPS: ");      
-      // Serial.println(TPS);
+      Serial.print("TPS: ");      
+      Serial.println(TPS);
       // Serial.print("TPS diff: ");      
       // Serial.println(TPS_Diff);
       // Serial.print("TPS diff min: ");      
@@ -367,6 +375,9 @@
       // //vcu state
       Serial.print("VCU_State: ");
       Serial.println(VCU_State);
+      Serial.print("VCU_StartState: ");
+      Serial.println(VCU_StartState);
+      
       Serial.println();
 
       // Serial.println("********************");
@@ -378,34 +389,34 @@
       Serial.println(function);
       Serial.println();
 
-      Serial.print("Inverter Temp 1: ");
-      Serial.println(inverterTemp1);
-      Serial.print("Inverter Temp 2: ");
-      Serial.println(inverterTemp2);
-      Serial.print("Avg Inverter Temp: ");
-      Serial.println(avgInverterTemp);
+      // Serial.print("Inverter Temp 1: ");
+      // Serial.println(inverterTemp1);
+      // Serial.print("Inverter Temp 2: ");
+      // Serial.println(inverterTemp2);
+      // Serial.print("Avg Inverter Temp: ");
+      // Serial.println(avgInverterTemp);
       Serial.print("TorqueVal: ");
       Serial.println(TorqueVal);
-      Serial.print("Reverse: ");
-      Serial.println(Reverse); 
+      // Serial.print("Reverse: ");
+      // Serial.println(Reverse); 
       Serial.print("RPM: ");
       Serial.println(motorRPM);
-      Serial.print("motorPower: ");
-      Serial.println(motorPower);
-      Serial.print("Mtr Temp 1: ");
-      Serial.println(motorTemp1);
-      Serial.print("Mtr Temp 2: ");
-      Serial.println(motorTemp2);
-      Serial.print("Avg motor Temp: ");
-      Serial.println(avgMotorTemp);
-      Serial.print("Motor HV: ");
-      Serial.println(motorHVbatteryVolts);
-      Serial.print("motor Torque: ");
-      Serial.println(motorTorque);
-      Serial.print("Motor Amps1: ");
-      Serial.println(motorCurrent1);
-      Serial.print("Motor amps2: ");
-      Serial.println(motorCurrent2);
+      // Serial.print("motorPower: ");
+      // Serial.println(motorPower);
+      // Serial.print("Mtr Temp 1: ");
+      // Serial.println(motorTemp1);
+      // Serial.print("Mtr Temp 2: ");
+      // Serial.println(motorTemp2);
+      // Serial.print("Avg motor Temp: ");
+      // Serial.println(avgMotorTemp);
+      // Serial.print("Motor HV: ");
+      // Serial.println(motorHVbatteryVolts);
+      // Serial.print("motor Torque: ");
+      // Serial.println(motorTorque);
+      // Serial.print("Motor Amps1: ");
+      // Serial.println(motorCurrent1);
+      // Serial.print("Motor amps2: ");
+      // Serial.println(motorCurrent2);
       // Serial.println();
 
       // Serial.println("********************");
@@ -417,16 +428,16 @@
       Serial.println(BMS_Voltage);
       // Serial.print("BMS_Current: ");
       // Serial.println(BMS_Current);
-      Serial.print("BMS_MinCellVoltage: ");
-      Serial.println(BMS_MinCellVoltage);
-      Serial.print("BMS_MaxCellVoltage: ");
-      Serial.println(BMS_MaxCellVoltage);
-      Serial.print("BMS_MinTemperature: ");
-      Serial.println(BMS_MinTemperature);
-      Serial.print("BMS_MaxTemperature: ");
-      Serial.println(BMS_MaxTemperature);
-      Serial.print("BMS_Status: ");
-      Serial.println(BMS_Status);
+      // Serial.print("BMS_MinCellVoltage: ");
+      // Serial.println(BMS_MinCellVoltage);
+      // Serial.print("BMS_MaxCellVoltage: ");
+      // Serial.println(BMS_MaxCellVoltage);
+      // Serial.print("BMS_MinTemperature: ");
+      // Serial.println(BMS_MinTemperature);
+      // Serial.print("BMS_MaxTemperature: ");
+      // Serial.println(BMS_MaxTemperature);
+      // Serial.print("BMS_Status: ");
+      // Serial.println(BMS_Status);
       // Serial.print("BMS_ConnectedModules: ");
       // Serial.println(BMS_ConnectedModules);
       // Serial.print("BMS_Power: ");

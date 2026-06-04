@@ -12,7 +12,11 @@
   bool Vacuumpomp;
   bool Oliepomp;
 
+  bool ForwardRequest;
+  bool ReverseRequest;
   bool Reverse;
+
+  int VCU_StartState;
 
   byte ACcur=0;
   byte CABlim=0;
@@ -55,14 +59,14 @@
   int TPS_Diff;
   int TPS_DiffMin;
   int TPS_DiffMax;
-  int ADC1_Min = 200;
-  int ADC2_Min = 200;
+  int ADC1_Min = 0;
+  int ADC2_Min = 0;
   int ADC4_Min = 120;
-  int ADC1_Max = 2500;
-  int ADC2_Max = 2500;
+  int ADC1_Max = 2000;
+  int ADC2_Max = 2000;
   int ADC4_Max = 180;
   int TorqueCommandMin = 0;
-  int TorqueCommandMax = 210;//2100 = 210Nm
+  int TorqueCommandMax = 1000;//2100 = 210Nm
   int TorqueCommandRegen = 300;
   
   float PP_Voltage;

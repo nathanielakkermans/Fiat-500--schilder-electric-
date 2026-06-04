@@ -522,19 +522,63 @@ long diff = us - prev;
       break;
   }
 
+
+    switch(VCU_StartState){
+      case 0:
+        Inverter_Enable = false;
+        if(VCU_Aan){
+          VCU_StartState = 1;
+        }
+      break;
+      case 1:
+        if (!ReverseRequest && !ForwardRequest){
+          VCU_StartState = 2;
+        }
+      break;
+      case 2:
+        if (ForwardRequest && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected && RemContact) {
+          VCU_StartState = 3;
+        }
+        if (ReverseRequest && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected && RemContact) {
+          VCU_StartState = 4;
+        }
+      break;
+      //ga vooruit
+      case 3:
+        Inverter_Enable = true;
+        Reverse = false;
+        if (!ForwardRequest){
+          VCU_StartState = 0;
+        }
+      break;
+      //ga achteruit
+      case 4:
+        Inverter_Enable = true;
+        Reverse = true;
+        if (!ReverseRequest){
+          VCU_StartState = 0;
+        }
+      break;
+    default:
+      // statements
+      break;
+    }
+
+
     //als de VCU aan staat dan controleren of de inverter gestart mag worden
     if (VCU_Aan)
     {
-      // if (RemContact && StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
-      if (StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
-      {
-        Inverter_Enable = true;
-      }
+    //   // if (RemContact && StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
+    //   if (StartPuls && TPS1 <= 0 && TPS2 <= 0 && BMS_Status == BMS_Ready && !ChargePlugDetected)
+    //   {
+    //     Inverter_Enable = true;
+    //     StartPuls = false;
+    //   }
     }
 
     if (VCU_State != 3 || ChargePlugDetected || BMS_Status != BMS_Ready)
     {
-      Inverter_Enable = false;
+      VCU_StartState = 0;
     }
 
     //zet inverter aan en uit als de VCU in "Enable" staat
@@ -551,31 +595,8 @@ long diff = us - prev;
         function = 0;
       }
 
-    //als motor RPM onder de 50 is. mag. er van richting veranderd worden
-    if (0 < 50)
-    {
-      //dash knopje voor achteruit, start puls voor vooruit
-      if (StartPuls && InverterDirection)
-        {
-          InverterDirection = false; //vooruit
-        }
-      else if (Dash_licht_Button && !InverterDirection)
-        {
-          InverterDirection = true; //achteruit
-        }
-    }
-    //cruise control
-    if (0 > 200)
-    {
-      if (Dash_licht_Button && !RemContact)
-      {
-        Cruise = true;
-      }
-      else if (RemContact)
-      {
-        Cruise = false;
-      }
-    }
+  
+  
 
     //waterpomp
     Waterpomp = Inverter_Enable || ChargePlugDetected || motorTemp1 > 50 || motorTemp2 > 50;
