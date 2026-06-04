@@ -66,7 +66,7 @@
   int ADC2_Max = 2000;
   int ADC4_Max = 180;
   int TorqueCommandMin = 0;
-  int TorqueCommandMax = 1000;//2100 = 210Nm
+  int TorqueCommandMax = 1100;//2100 = 210Nm
   int TorqueCommandRegen = 300;
   
   float PP_Voltage;
