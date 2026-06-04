@@ -17,7 +17,7 @@
   Metro timer_LoggerLowSpeed = Metro(1000);
   Metro timer_LoggerHighSpeed = Metro(1000);
 #endif
-
+//test van hans
 #ifdef DeviceType_CurrentSensor
   #include <ADS1115_WE.h> 
   #include <Wire.h>
