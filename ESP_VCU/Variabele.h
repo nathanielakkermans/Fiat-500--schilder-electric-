@@ -66,9 +66,14 @@
   int ADC2_Max = 2000;
   int ADC4_Max = 180;
   int TorqueCommandMin = 0;
-  int TorqueCommandMax = 1100;//2100 = 210Nm
-  int TorqueCommandRegen = 300;
-  
+  int TorqueCommandMax = 750;//2100 = 210Nm
+  float Max_Regen = 200;
+  float RegenLimiter;   //0 tot 1
+  float RegenDerateRPM = 500;
+  float Target_TorqueCommand;
+  long TPS_RegenPoint = 15; //punt van regen in %
+
+
   float PP_Voltage;
   float PP_Ref = 4600;
   float PP_PullUp = 1000;

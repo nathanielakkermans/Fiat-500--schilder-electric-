@@ -531,7 +531,7 @@ long diff = us - prev;
         }
       break;
       case 1:
-        if (!ReverseRequest && !ForwardRequest){
+        if (!ReverseRequest && !ForwardRequest && RemContact){
           VCU_StartState = 2;
         }
       break;

@@ -226,35 +226,19 @@
 
   //  PP_PullUp;
 
-    
-        //achteruit
-        // if (motorRPM == 0 && StartPuls && (ReverseMillis + 1000) < millis())
-        // {
-        //   ReverseMillis = millis();
-        //   Reverse = !Reverse;
-        // }
-
-  
 
 
-        //als de motor nog draait dan regen inschakelen
-        int TorqueMIN;      
-        // if(motorRPM > 100)
-        // {
-        //   TorqueMIN = TorqueCommandRegen;
-        // }
-        // else
-        // {
-          TorqueMIN = TorqueCommandMin;         
-        // }
+      
         if(ADC_Value1 < ADC1_Max + 500){
-          TPS1 = map(ADC_Value1,ADC1_Min,ADC1_Max,TorqueMIN,TorqueCommandMax);
+          TPS1 = map(ADC_Value1,ADC1_Min,ADC1_Max,0,100);
+          if(TPS1 > 100){TPS1 = 100;}
         }else
         {
           TPS1 = 0;
         }
         if(ADC_Value2 < ADC2_Max + 500){
-          TPS2 = map(ADC_Value2,ADC2_Min,ADC2_Max,TorqueMIN,TorqueCommandMax);
+          TPS2 = map(ADC_Value2,ADC2_Min,ADC2_Max,0,100);
+          if(TPS2 > 100){TPS2 = 100;}
         }else{
           TPS2 = 0;
         }
@@ -265,26 +249,49 @@
 
 
         //koppeling
-        TPS = (((TPS1 + TPS2) / 2) * ((100-Clutch) /100)) + (TorqueCommandRegen * (Clutch / 100));   
+        TPS = (TPS1 + TPS2) / 2;   
 
-        if (TPS < TorqueMIN)
-          {
-            TPS = TorqueMIN;
-          }
-        if (TPS > TorqueCommandMax)
-          {
-            TPS = TorqueCommandMax;
-          }
-        // if (TPS_Diff > 80 || TPS_Diff < -80)
-        //     {
-        //       TPS = TorqueCommandRegen;
-        //     }
-        if(Reverse){
-          TorqueVal = 10000 + (TPS * -1);
+
+
+        if (!Reverse){
+          RegenLimiter = motorRPM / RegenDerateRPM;
+        }else{
+          RegenLimiter = (motorRPM * -1) / RegenDerateRPM;
         }
-        else{
-          TorqueVal = 10000 + TPS;
+        if(RegenLimiter > 1){RegenLimiter=1;};
+        if(RegenLimiter < 0){RegenLimiter=0;};
+
+ 
+        
+
+        // ACCELERATIE OF REGEN
+        if (TPS >= TPS_RegenPoint) {
+            if (TPS_RegenPoint == 100) {
+                Target_TorqueCommand = 0;
+            } else {
+                float actieve_range = 100 - TPS_RegenPoint;
+                float pedaal_ingedrukt = TPS - TPS_RegenPoint;
+                Target_TorqueCommand = (pedaal_ingedrukt * TorqueCommandMax) / actieve_range;
+            }
         }
+        else {
+            if (TPS_RegenPoint == 0) {
+                Target_TorqueCommand = 0;
+            } else {
+                float actieve_range = TPS_RegenPoint;
+                float pedaal_losgelaten = TPS_RegenPoint - TPS;
+                Target_TorqueCommand = -((pedaal_losgelaten * (Max_Regen * RegenLimiter)) / actieve_range);
+            }
+        }
+
+        // --- ACHTERUIT FYSICA OMDRAAIEN ---
+        if (Reverse) {
+            Target_TorqueCommand = -Target_TorqueCommand;
+        }
+  
+      
+        TorqueVal = 10000 + Target_TorqueCommand;
+        
         
 
         if (TPS_Diff < TPS_DiffMin)
@@ -350,6 +357,9 @@
       // Serial.println(TPS2);
       Serial.print("TPS: ");      
       Serial.println(TPS);
+      Serial.print("Target_TorqueCommand: ");      
+      Serial.println(Target_TorqueCommand);
+      
       // Serial.print("TPS diff: ");      
       // Serial.println(TPS_Diff);
       // Serial.print("TPS diff min: ");      
